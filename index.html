@@ -182,6 +182,13 @@
   .foot-pill{display:inline-block;background:var(--white);border:2px solid var(--navy-lt);
     border-radius:999px;padding:5px 18px;margin-bottom:7px;opacity:.7;}
 </style>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EEMKJTJ15E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-EEMKJTJ15E');
+</script>
 </head>
 <body>
 <div class="cloud c1">☁️</div>
@@ -276,7 +283,7 @@
 
   <footer>
     <div class="foot-pill">太白占卜 · 僅供娛樂參考</div>
-    <p>© 2025 太白占卜</p>
+    <p>© 2026 太白占卜</p>
   </footer>
 </div>
 
@@ -363,6 +370,7 @@ function setDate(){
 }
 
 function drawFortune(){
+  gtag('event', 'draw_fortune', {'event_category':'engagement','event_label':'占卜掣'});
   const btn=document.getElementById('fortuneBtn');
   const res=document.getElementById('result');
   btn.classList.add('spinning');btn.disabled=true;
