@@ -597,10 +597,41 @@ function resetFortune(){
 
   function shareFortune(){
   const target = document.getElementById('result');
+  
   html2canvas(target, {
     backgroundColor: '#deeaf8',
     scale: 2,
     useCORS: true,
+    logging: false,
+    onclone: function(clonedDoc) {
+      
+      // 修復一：移除波點背景層，解決淺色問題
+      const fix = clonedDoc.createElement('style');
+      fix.textContent = `
+        body::before { display: none !important; }
+        body { background: #deeaf8 !important; }
+      `;
+      clonedDoc.head.appendChild(fix);
+      
+      // 修復二：加入四邊留白同標題
+      const clonedResult = clonedDoc.getElementById('result');
+      clonedResult.style.padding = '32px';
+      clonedResult.style.backgroundColor = '#deeaf8';
+      
+      // 修復三：喺頂部加入網站標題
+      const header = clonedDoc.createElement('div');
+      header.style.cssText = `
+        text-align: center;
+        margin-bottom: 20px;
+        font-family: 'Noto Sans TC', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #2c4570;
+        letter-spacing: 0.2em;
+      `;
+      header.textContent = '✦ 太白占卜 ✦';
+      clonedResult.insertBefore(header, clonedResult.firstChild);
+    }
   }).then(canvas => {
     const link = document.createElement('a');
     link.download = '太白占卜今日運程.png';
@@ -608,7 +639,7 @@ function resetFortune(){
     link.click();
   });
 }
-
+  
 setDate();
 </script>
 </body>
