@@ -181,6 +181,27 @@
   footer{text-align:center;padding-top:50px;font-size:.74rem;color:var(--text-dim);letter-spacing:.08em;font-weight:300;}
   .foot-pill{display:inline-block;background:var(--white);border:2px solid var(--navy-lt);
     border-radius:999px;padding:5px 18px;margin-bottom:7px;opacity:.7;}
+
+  /* share button */
+.share-btn {
+  background:var(--yellow);
+  border:2.5px solid var(--navy);
+  border-radius:999px;
+  color:var(--navy-dk);
+  font-family:'Noto Sans TC',sans-serif;
+  font-size:1rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  padding:10px 28px;
+  cursor:pointer;
+  box-shadow:3px 3px 0 var(--navy);
+  transition:all .15s;
+  margin-top:12px;
+}
+.share-btn:hover {
+  transform:translateY(-2px);
+  box-shadow:5px 5px 0 var(--navy);
+}
 </style>
   
  <!-- Google tag (gtag.js) -->
@@ -191,6 +212,9 @@
   gtag('js', new Date());
 
   gtag('config', 'G-EEMKJTJ15E');
+
+<!-- html2canvas 截圖工具 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>  
 </script>
   
 </head>
@@ -273,6 +297,8 @@
     </div>
     <div class="grid" id="cardsGrid"></div>
     <div class="reset-wrap">
+      <button class="share-btn" onclick="shareFortune()">📸 分享今日運程</button>
+      <br><br>
       <button class="reset-btn" onclick="resetFortune()">↺ 明日再來</button>
     </div>
   </div>
@@ -567,6 +593,20 @@ function drawFortune(){
 function resetFortune(){
   document.getElementById('result').classList.remove('vis');
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+  function shareFortune(){
+  const target = document.getElementById('result');
+  html2canvas(target, {
+    backgroundColor: '#deeaf8',
+    scale: 2,
+    useCORS: true,
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = '太白占卜今日運程.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
 }
 
 setDate();
