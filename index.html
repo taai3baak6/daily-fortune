@@ -625,6 +625,8 @@ function resetFortune(){
         el.style.backgroundColor = '#ffffff';
         el.style.border = '2.5px solid #4a6899';
         el.style.boxShadow = '4px 4px 0 #7a9abf';
+        el.style.position = 'relative';
+        el.style.overflow = 'hidden';
       
       // 手動加黃線代替 ::before 偽元素
       const stripe = clonedDoc.createElement('div');
@@ -643,6 +645,8 @@ function resetFortune(){
         advice.style.backgroundColor = '#fef5b8';
         advice.style.border = '2.5px solid #dba820';
         advice.style.boxShadow = '4px 4px 0 #dba820';
+        advice.style.position = 'relative';
+        advice.style.overflow = 'hidden';
       
       // advice 卡的黃線顏色深一點
       const stripe = clonedDoc.createElement('div');
