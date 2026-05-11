@@ -605,44 +605,69 @@ function resetFortune(){
     logging: false,
     onclone: function(clonedDoc) {
 
-      // 核心修復：直接將CSS變數的實際值注入cloned文件的根元素
-      // html2canvas 就能正確解讀所有 var(--xxx) 的顏色
-      const root = clonedDoc.documentElement;
-      root.style.setProperty('--bg',         '#deeaf8');
-      root.style.setProperty('--navy',       '#4a6899');
-      root.style.setProperty('--navy-dk',    '#2c4570');
-      root.style.setProperty('--navy-lt',    '#7a9abf');
-      root.style.setProperty('--yellow',     '#f7d55e');
-      root.style.setProperty('--yellow-lt',  '#fef5b8');
-      root.style.setProperty('--yellow-dk',  '#dba820');
-      root.style.setProperty('--white',      '#ffffff');
-      root.style.setProperty('--text',       '#2c3e6b');
-      root.style.setProperty('--text-dim',   '#7a90b8');
-
-      // 隱藏波點背景層
+      // 隱藏波點背景同按鈕
       const fix = clonedDoc.createElement('style');
       fix.textContent = `
         body::before { display: none !important; }
         .share-btn, .reset-btn { display: none !important; }
-        * { animation: none !important; }
+        * { animation: none !important; transition: none !important; }
       `;
       clonedDoc.head.appendChild(fix);
 
-      // 加入四邊留白
+      // 直接逐個元素設定顏色（唔用CSS變數）
       const clonedResult = clonedDoc.getElementById('result');
       clonedResult.style.padding = '32px';
       clonedResult.style.backgroundColor = '#deeaf8';
 
-      // 頂部加網站標題
+      clonedDoc.querySelectorAll('.card').forEach(el => {
+        el.style.backgroundColor = '#ffffff';
+        el.style.border = '2.5px solid #4a6899';
+        el.style.boxShadow = '4px 4px 0 #7a9abf';
+      });
+
+      const advice = clonedDoc.querySelector('.card.advice');
+      if(advice){
+        advice.style.backgroundColor = '#fef5b8';
+        advice.style.border = '2.5px solid #dba820';
+        advice.style.boxShadow = '4px 4px 0 #dba820';
+      }
+
+      clonedDoc.querySelectorAll('.c-text').forEach(el => {
+        el.style.color = '#2c3e6b';
+      });
+
+      clonedDoc.querySelectorAll('.advice .c-text').forEach(el => {
+        el.style.color = '#2c4570';
+        el.style.fontWeight = '600';
+      });
+
+      clonedDoc.querySelectorAll('.c-cat').forEach(el => {
+        el.style.color = '#2c4570';
+      });
+
+      clonedDoc.querySelectorAll('.c-stars').forEach(el => {
+        el.style.color = '#dba820';
+      });
+
+      const badge = clonedDoc.querySelector('.res-badge');
+      if(badge){
+        badge.style.backgroundColor = '#2c4570';
+        badge.style.color = '#f7d55e';
+      }
+
+      const title = clonedDoc.querySelector('.res-title');
+      if(title){ title.style.color = '#2c4570'; }
+
+      // 頂部加標題
       const header = clonedDoc.createElement('div');
       header.style.cssText = `
-        text-align: center;
-        margin-bottom: 20px;
-        font-family: 'Noto Sans TC', sans-serif;
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #2c4570;
-        letter-spacing: 0.2em;
+        text-align:center;
+        margin-bottom:20px;
+        font-family:'Noto Sans TC',sans-serif;
+        font-size:1.1rem;
+        font-weight:700;
+        color:#2c4570;
+        letter-spacing:0.2em;
       `;
       header.textContent = '✦ 太白占卜 ✦';
       clonedResult.insertBefore(header, clonedResult.firstChild);
@@ -655,7 +680,7 @@ function resetFortune(){
     link.click();
   });
 }
-  
+
 setDate();
 </script>
 </body>
