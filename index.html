@@ -597,7 +597,7 @@ function resetFortune(){
 
   function shareFortune() {
 
-  const target = document.getElementById('fortuneContent');
+  const target = document.getElementById('result');
 
   if (!target) {
     alert('找不到內容');
@@ -610,7 +610,6 @@ function resetFortune(){
     useCORS: true
   }).then(function(canvas) {
 
-    // 下載圖片
     const link = document.createElement('a');
 
     link.download = 'daily-fortune.png';
