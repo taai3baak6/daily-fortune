@@ -597,28 +597,64 @@ function resetFortune(){
 
   function shareFortune(){
   const target = document.getElementById('result');
-  
+
   html2canvas(target, {
     backgroundColor: '#deeaf8',
     scale: 2,
     useCORS: true,
     logging: false,
     onclone: function(clonedDoc) {
-      
-      // 修復一：移除波點背景層，解決淺色問題
+
       const fix = clonedDoc.createElement('style');
       fix.textContent = `
         body::before { display: none !important; }
         body { background: #deeaf8 !important; }
+
+        .card {
+          background: #ffffff !important;
+          border: 2.5px solid #4a6899 !important;
+          box-shadow: 4px 4px 0 #7a9abf !important;
+        }
+        .card::before {
+          background: #f7d55e !important;
+        }
+        .c-cat {
+          color: #2c4570 !important;
+        }
+        .c-text {
+          color: #2c3e6b !important;
+        }
+        .c-stars {
+          color: #dba820 !important;
+        }
+        .advice {
+          background: #fef5b8 !important;
+          border-color: #dba820 !important;
+          box-shadow: 4px 4px 0 #dba820 !important;
+        }
+        .advice::before {
+          background: #dba820 !important;
+        }
+        .advice .c-text {
+          color: #2c4570 !important;
+        }
+        .res-title {
+          color: #2c4570 !important;
+        }
+        .res-badge {
+          background: #2c4570 !important;
+          color: #f7d55e !important;
+        }
+        .share-btn, .reset-btn {
+          display: none !important;
+        }
       `;
       clonedDoc.head.appendChild(fix);
-      
-      // 修復二：加入四邊留白同標題
+
       const clonedResult = clonedDoc.getElementById('result');
       clonedResult.style.padding = '32px';
       clonedResult.style.backgroundColor = '#deeaf8';
-      
-      // 修復三：喺頂部加入網站標題
+
       const header = clonedDoc.createElement('div');
       header.style.cssText = `
         text-align: center;
