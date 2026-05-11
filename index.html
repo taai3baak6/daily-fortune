@@ -595,116 +595,129 @@ function resetFortune(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-  function shareFortune(){
-  const target = document.getElementById('result');
+  async function shareFortune() {
 
-  html2canvas(target, {
-    backgroundColor: '#deeaf8',
-    scale: 2,
-    useCORS: true,
-    logging: false,
-    onclone: function(clonedDoc) {
+  const target = document.getElementById('fortuneContent');
 
-      // 隱藏波點背景同按鈕
-      const fix = clonedDoc.createElement('style');
-      fix.textContent = `
-        body::before { display: none !important; }
-        .share-btn, .reset-btn { display: none !important; }
-        * { animation: none !important; transition: none !important; }
-        .card::before { display: none !important; }
-        .advice::before { display: none !important; }
-      `;
-      clonedDoc.head.appendChild(fix);
+  if (!target) return;
 
-      // 直接逐個元素設定顏色（唔用CSS變數）
-      const clonedResult = clonedDoc.getElementById('result');
-      clonedResult.style.padding = '32px';
-      clonedResult.style.backgroundColor = '#deeaf8';
+  try {
 
-      clonedDoc.querySelectorAll('.card').forEach(el => {
-        el.style.backgroundColor = '#ffffff';
-        el.style.border = '2.5px solid #4a6899';
-        el.style.boxShadow = '4px 4px 0 #7a9abf';
-      
-      // 手動加黃線代替 ::before 偽元素
-      const stripe = clonedDoc.createElement('div');
-      stripe.style.cssText = `
-        position:absolute;
-        top:0; left:12px; right:12px;
-        height:4px;
-        background:#f7d55e;
-        border-radius:0 0 4px 4px;
-      `;
-      el.appendChild(stripe); 
-   });
+    const canvas = await html2canvas(target, {
+      backgroundColor: "#dfe8f5",
+      scale: 2,
+      useCORS: true,
 
-      const advice = clonedDoc.querySelector('.card.advice');
-      if(advice){
-        advice.style.backgroundColor = '#fef5b8';
-        advice.style.border = '2.5px solid #dba820';
-        advice.style.boxShadow = '4px 4px 0 #dba820';
-      
-      // advice 卡的黃線顏色深一點
-      const stripe = clonedDoc.createElement('div');
-      stripe.style.cssText = `
-        position:absolute;
-        top:0; left:12px; right:12px;
-        height:4px;
-        background:#dba820;
-        border-radius:0 0 4px 4px;
-      `;
-      advice.appendChild(stripe);
+      onclone: (clonedDoc) => {
+
+        // ===== 修正所有 card =====
+        clonedDoc.querySelectorAll('.card').forEach(el => {
+
+          // 防止黃色線凸出
+          el.style.overflow = 'hidden';
+
+          // html2canvas rendering 穩定化
+          el.style.transform = 'none';
+          el.style.boxShadow = '4px 4px 0 #7b90c9';
+
+        });
+
+        // ===== 普通卡 stripe =====
+        clonedDoc.querySelectorAll('.card:not(.advice)').forEach(el => {
+
+          const stripe = clonedDoc.createElement('div');
+
+          stripe.style.position = 'absolute';
+          stripe.style.top = '0';
+          stripe.style.left = '12px';
+          stripe.style.right = '12px';
+          stripe.style.height = '6px';
+
+          stripe.style.background = '#f6d45a';
+
+          stripe.style.borderBottomLeftRadius = '6px';
+          stripe.style.borderBottomRightRadius = '6px';
+
+          stripe.style.zIndex = '2';
+
+          el.appendChild(stripe);
+
+        });
+
+        // ===== advice card 專用 stripe =====
+        const advice = clonedDoc.querySelector('.card.advice');
+
+        if (advice) {
+
+          const stripe = clonedDoc.createElement('div');
+
+          stripe.style.position = 'absolute';
+          stripe.style.top = '0';
+          stripe.style.left = '12px';
+          stripe.style.right = '12px';
+          stripe.style.height = '8px';
+
+          stripe.style.background = '#e0b21b';
+
+          stripe.style.borderBottomLeftRadius = '8px';
+          stripe.style.borderBottomRightRadius = '8px';
+
+          stripe.style.zIndex = '2';
+
+          advice.appendChild(stripe);
+
+        }
+
       }
 
-      clonedDoc.querySelectorAll('.c-text').forEach(el => {
-        el.style.color = '#2c3e6b';
-      });
+    });
 
-      clonedDoc.querySelectorAll('.advice .c-text').forEach(el => {
-        el.style.color = '#2c4570';
-        el.style.fontWeight = '600';
-      });
+    canvas.toBlob(async (blob) => {
 
-      clonedDoc.querySelectorAll('.c-cat').forEach(el => {
-        el.style.color = '#2c4570';
-      });
+      if (!blob) return;
 
-      clonedDoc.querySelectorAll('.c-stars').forEach(el => {
-        el.style.color = '#dba820';
-      });
+      const file = new File(
+        [blob],
+        'daily-fortune.png',
+        { type: 'image/png' }
+      );
 
-      const badge = clonedDoc.querySelector('.res-badge');
-      if(badge){
-        badge.style.backgroundColor = '#2c4570';
-        badge.style.color = '#f7d55e';
+      // ===== 手機分享 =====
+      if (
+        navigator.canShare &&
+        navigator.canShare({ files: [file] })
+      ) {
+
+        await navigator.share({
+          title: '太白占卜 今日運程',
+          text: '今日運程分享 ✨',
+          files: [file]
+        });
+
+      } else {
+
+        // ===== fallback download =====
+        const link = document.createElement('a');
+
+        link.href = URL.createObjectURL(blob);
+        link.download = 'daily-fortune.png';
+
+        link.click();
+
+        URL.revokeObjectURL(link.href);
+
       }
 
-      const title = clonedDoc.querySelector('.res-title');
-      if(title){ title.style.color = '#2c4570'; }
+    });
 
-      // 頂部加標題
-      const header = clonedDoc.createElement('div');
-      header.style.cssText = `
-        text-align:center;
-        margin-bottom:20px;
-        font-family:'Noto Sans TC',sans-serif;
-        font-size:1.1rem;
-        font-weight:700;
-        color:#2c4570;
-        letter-spacing:0.2em;
-      `;
-      header.textContent = '✦ 太白占卜 ✦';
-      clonedResult.insertBefore(header, clonedResult.firstChild);
-    }
+  } catch (err) {
 
-  }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = '太白占卜今日運程.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  });
+    console.error(err);
+    alert('分享圖片生成失敗');
+
+  }
+
 }
-
 setDate();
 </script>
 </body>
