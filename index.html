@@ -600,136 +600,32 @@ function resetFortune(){
   const target = document.getElementById('fortuneContent');
 
   if (!target) {
-    alert('找不到運程內容');
+    alert('找不到內容');
     return;
   }
 
-  try {
+  html2canvas(target, {
+    backgroundColor: "#dfe8f5",
+    scale: 2,
+    useCORS: true
+  }).then(function(canvas) {
 
-    const canvas = await html2canvas(target, {
-      backgroundColor: "#dfe8f5",
-      scale: 2,
-      useCORS: true,
+    // 下載圖片
+    const link = document.createElement('a');
 
-      onclone: function(clonedDoc) {
+    link.download = 'daily-fortune.png';
 
-        // ===== 所有 card =====
-        const cards = clonedDoc.querySelectorAll('.card');
+    link.href = canvas.toDataURL('image/png');
 
-        cards.forEach(function(el){
+    link.click();
 
-          el.style.overflow = 'hidden';
-          el.style.position = 'relative';
-          el.style.transform = 'none';
-
-        });
-
-        // ===== 普通 card =====
-        cards.forEach(function(el){
-
-          // skip advice
-          if (el.classList.contains('advice')) return;
-
-          const stripe = clonedDoc.createElement('div');
-
-          stripe.style.position = 'absolute';
-          stripe.style.top = '0';
-          stripe.style.left = '12px';
-          stripe.style.right = '12px';
-          stripe.style.height = '6px';
-
-          stripe.style.background = '#f6d45a';
-
-          stripe.style.borderBottomLeftRadius = '6px';
-          stripe.style.borderBottomRightRadius = '6px';
-
-          stripe.style.zIndex = '5';
-
-          el.appendChild(stripe);
-
-        });
-
-        // ===== advice card =====
-        const advice = clonedDoc.querySelector('.card.advice');
-
-        if (advice) {
-
-          const stripe = clonedDoc.createElement('div');
-
-          stripe.style.position = 'absolute';
-          stripe.style.top = '0';
-          stripe.style.left = '12px';
-          stripe.style.right = '12px';
-          stripe.style.height = '8px';
-
-          stripe.style.background = '#e0b21b';
-
-          stripe.style.borderBottomLeftRadius = '8px';
-          stripe.style.borderBottomRightRadius = '8px';
-
-          stripe.style.zIndex = '5';
-
-          advice.appendChild(stripe);
-
-        }
-
-      }
-
-    });
-
-    // ===== 轉圖片 =====
-    canvas.toBlob(async function(blob){
-
-      if (!blob) {
-        alert('圖片生成失敗');
-        return;
-      }
-
-      const file = new File(
-        [blob],
-        'daily-fortune.png',
-        { type: 'image/png' }
-      );
-
-      // ===== 手機分享 =====
-      if (
-        navigator.canShare &&
-        navigator.canShare({ files:[file] })
-      ) {
-
-        await navigator.share({
-          title:'太白占卜 今日運程',
-          text:'今日運程分享 ✨',
-          files:[file]
-        });
-
-      } else {
-
-        // ===== fallback download =====
-        const link = document.createElement('a');
-
-        link.href = URL.createObjectURL(blob);
-        link.download = 'daily-fortune.png';
-
-        document.body.appendChild(link);
-
-        link.click();
-
-        document.body.removeChild(link);
-
-      }
-
-    }, 'image/png');
-
-  } catch(err) {
+  }).catch(function(err){
 
     console.error(err);
 
-    alert(
-      '分享失敗：' + err.message
-    );
+    alert('生成圖片失敗');
 
-  }
+  });
 
 }
 setDate();
