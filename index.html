@@ -605,56 +605,35 @@ function resetFortune(){
     logging: false,
     onclone: function(clonedDoc) {
 
+      // 核心修復：直接將CSS變數的實際值注入cloned文件的根元素
+      // html2canvas 就能正確解讀所有 var(--xxx) 的顏色
+      const root = clonedDoc.documentElement;
+      root.style.setProperty('--bg',         '#deeaf8');
+      root.style.setProperty('--navy',       '#4a6899');
+      root.style.setProperty('--navy-dk',    '#2c4570');
+      root.style.setProperty('--navy-lt',    '#7a9abf');
+      root.style.setProperty('--yellow',     '#f7d55e');
+      root.style.setProperty('--yellow-lt',  '#fef5b8');
+      root.style.setProperty('--yellow-dk',  '#dba820');
+      root.style.setProperty('--white',      '#ffffff');
+      root.style.setProperty('--text',       '#2c3e6b');
+      root.style.setProperty('--text-dim',   '#7a90b8');
+
+      // 隱藏波點背景層
       const fix = clonedDoc.createElement('style');
       fix.textContent = `
         body::before { display: none !important; }
-        body { background: #deeaf8 !important; }
-
-        .card {
-          background: #ffffff !important;
-          border: 2.5px solid #4a6899 !important;
-          box-shadow: 4px 4px 0 #7a9abf !important;
-        }
-        .card::before {
-          background: #f7d55e !important;
-        }
-        .c-cat {
-          color: #2c4570 !important;
-        }
-        .c-text {
-          color: #2c3e6b !important;
-        }
-        .c-stars {
-          color: #dba820 !important;
-        }
-        .advice {
-          background: #fef5b8 !important;
-          border-color: #dba820 !important;
-          box-shadow: 4px 4px 0 #dba820 !important;
-        }
-        .advice::before {
-          background: #dba820 !important;
-        }
-        .advice .c-text {
-          color: #2c4570 !important;
-        }
-        .res-title {
-          color: #2c4570 !important;
-        }
-        .res-badge {
-          background: #2c4570 !important;
-          color: #f7d55e !important;
-        }
-        .share-btn, .reset-btn {
-          display: none !important;
-        }
+        .share-btn, .reset-btn { display: none !important; }
+        * { animation: none !important; }
       `;
       clonedDoc.head.appendChild(fix);
 
+      // 加入四邊留白
       const clonedResult = clonedDoc.getElementById('result');
       clonedResult.style.padding = '32px';
       clonedResult.style.backgroundColor = '#deeaf8';
 
+      // 頂部加網站標題
       const header = clonedDoc.createElement('div');
       header.style.cssText = `
         text-align: center;
@@ -668,6 +647,7 @@ function resetFortune(){
       header.textContent = '✦ 太白占卜 ✦';
       clonedResult.insertBefore(header, clonedResult.firstChild);
     }
+
   }).then(canvas => {
     const link = document.createElement('a');
     link.download = '太白占卜今日運程.png';
