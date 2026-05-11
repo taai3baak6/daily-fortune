@@ -595,38 +595,116 @@ function resetFortune(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-  function shareFortune() {
-
+  function shareFortune(){
   const target = document.getElementById('result');
 
-  if (!target) {
-    alert('找不到內容');
-    return;
-  }
-
   html2canvas(target, {
-    backgroundColor: "#dfe8f5",
+    backgroundColor: '#deeaf8',
     scale: 2,
-    useCORS: true
-  }).then(function(canvas) {
+    useCORS: true,
+    logging: false,
+    onclone: function(clonedDoc) {
 
+      // 隱藏波點背景同按鈕
+      const fix = clonedDoc.createElement('style');
+      fix.textContent = `
+        body::before { display: none !important; }
+        .share-btn, .reset-btn { display: none !important; }
+        * { animation: none !important; transition: none !important; }
+        .card::before { display: none !important; }
+        .advice::before { display: none !important; }
+      `;
+      clonedDoc.head.appendChild(fix);
+
+      // 直接逐個元素設定顏色（唔用CSS變數）
+      const clonedResult = clonedDoc.getElementById('result');
+      clonedResult.style.padding = '32px';
+      clonedResult.style.backgroundColor = '#deeaf8';
+
+      clonedDoc.querySelectorAll('.card').forEach(el => {
+        el.style.backgroundColor = '#ffffff';
+        el.style.border = '2.5px solid #4a6899';
+        el.style.boxShadow = '4px 4px 0 #7a9abf';
+      
+      // 手動加黃線代替 ::before 偽元素
+      const stripe = clonedDoc.createElement('div');
+      stripe.style.cssText = `
+        position:absolute;
+        top:0; left:12px; right:12px;
+        height:4px;
+        background:#f7d55e;
+        border-radius:0 0 4px 4px;
+      `;
+      el.appendChild(stripe); 
+   });
+
+      const advice = clonedDoc.querySelector('.card.advice');
+      if(advice){
+        advice.style.backgroundColor = '#fef5b8';
+        advice.style.border = '2.5px solid #dba820';
+        advice.style.boxShadow = '4px 4px 0 #dba820';
+      
+      // advice 卡的黃線顏色深一點
+      const stripe = clonedDoc.createElement('div');
+      stripe.style.cssText = `
+        position:absolute;
+        top:0; left:12px; right:12px;
+        height:4px;
+        background:#dba820;
+        border-radius:0 0 4px 4px;
+      `;
+      advice.appendChild(stripe);
+      }
+
+      clonedDoc.querySelectorAll('.c-text').forEach(el => {
+        el.style.color = '#2c3e6b';
+      });
+
+      clonedDoc.querySelectorAll('.advice .c-text').forEach(el => {
+        el.style.color = '#2c4570';
+        el.style.fontWeight = '600';
+      });
+
+      clonedDoc.querySelectorAll('.c-cat').forEach(el => {
+        el.style.color = '#2c4570';
+      });
+
+      clonedDoc.querySelectorAll('.c-stars').forEach(el => {
+        el.style.color = '#dba820';
+      });
+
+      const badge = clonedDoc.querySelector('.res-badge');
+      if(badge){
+        badge.style.backgroundColor = '#2c4570';
+        badge.style.color = '#f7d55e';
+      }
+
+      const title = clonedDoc.querySelector('.res-title');
+      if(title){ title.style.color = '#2c4570'; }
+
+      // 頂部加標題
+      const header = clonedDoc.createElement('div');
+      header.style.cssText = `
+        text-align:center;
+        margin-bottom:20px;
+        font-family:'Noto Sans TC',sans-serif;
+        font-size:1.1rem;
+        font-weight:700;
+        color:#2c4570;
+        letter-spacing:0.2em;
+      `;
+      header.textContent = '✦ 太白占卜 ✦';
+      clonedResult.insertBefore(header, clonedResult.firstChild);
+    }
+
+  }).then(canvas => {
     const link = document.createElement('a');
-
-    link.download = 'daily-fortune.png';
-
+    link.download = '太白占卜今日運程.png';
     link.href = canvas.toDataURL('image/png');
-
     link.click();
-
-  }).catch(function(err){
-
-    console.error(err);
-
-    alert('生成圖片失敗');
-
   });
-
 }
+  
 setDate();
 </script>
 </body>
