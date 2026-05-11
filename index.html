@@ -611,6 +611,8 @@ function resetFortune(){
         body::before { display: none !important; }
         .share-btn, .reset-btn { display: none !important; }
         * { animation: none !important; transition: none !important; }
+        .card::before { display: none !important; }
+        .advice::before { display: none !important; }
       `;
       clonedDoc.head.appendChild(fix);
 
@@ -623,13 +625,35 @@ function resetFortune(){
         el.style.backgroundColor = '#ffffff';
         el.style.border = '2.5px solid #4a6899';
         el.style.boxShadow = '4px 4px 0 #7a9abf';
-      });
+      
+      // 手動加黃線代替 ::before 偽元素
+      const stripe = clonedDoc.createElement('div');
+      stripe.style.cssText = `
+        position:absolute;
+        top:0; left:12px; right:12px;
+        height:4px;
+        background:#f7d55e;
+        border-radius:0 0 4px 4px;
+      `;
+      el.appendChild(stripe); 
+   });
 
       const advice = clonedDoc.querySelector('.card.advice');
       if(advice){
         advice.style.backgroundColor = '#fef5b8';
         advice.style.border = '2.5px solid #dba820';
         advice.style.boxShadow = '4px 4px 0 #dba820';
+      
+      // advice 卡的黃線顏色深一點
+      const stripe = clonedDoc.createElement('div');
+      stripe.style.cssText = `
+        position:absolute;
+        top:0; left:12px; right:12px;
+        height:4px;
+        background:#dba820;
+        border-radius:0 0 4px 4px;
+      `;
+      advice.appendChild(stripe);
       }
 
       clonedDoc.querySelectorAll('.c-text').forEach(el => {
