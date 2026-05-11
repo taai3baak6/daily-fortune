@@ -701,11 +701,36 @@ function resetFortune(){
       clonedResult.insertBefore(header, clonedResult.firstChild);
     }
 
-  }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = '太白占卜今日運程.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+  }).then(async canvas => {
+
+    // 將 canvas 轉成 Blob（圖片的原始數據格式）
+    canvas.toBlob(async function(blob) {
+      const file = new File([blob], '太白占卜今日運程.png', {type: 'image/png'});
+
+      // 檢查瀏覽器係咪支援 Web Share API（iPhone Safari 支援）
+      if (navigator.share && navigator.canShare({files: [file]})) {
+
+        // iPhone / 現代瀏覽器：彈出原生分享視窗
+        try {
+          await navigator.share({
+            files: [file],
+            title: '太白占卜今日運程',
+          });
+        } catch(err) {
+          // 用戶取消分享，唔需要做任何嘢
+          console.log('分享已取消');
+        }
+
+      } else {
+
+        // 舊瀏覽器備用方案：直接下載
+        const link = document.createElement('a');
+        link.download = '太白占卜今日運程.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }
+
+    }, 'image/png');
   });
 }
   
