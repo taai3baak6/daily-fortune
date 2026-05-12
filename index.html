@@ -699,7 +699,33 @@ function resetFortune(){
       `;
       header.textContent = '✦ 太白占卜 ✦';
       clonedResult.insertBefore(header, clonedResult.firstChild);
-    }
+
+      // 底部加 footer
+      const footer = clonedDoc.createElement('div');
+      footer.style.cssText = `
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid #7a9abf;
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 0.75rem;
+      color: #7a90b8;
+      letter-spacing: 0.08em;
+    `;
+    footer.innerHTML = `
+      <div style="
+      display:inline-block;
+      background:#ffffff;
+      border:2px solid #7a9abf;
+      border-radius:999px;
+      padding:5px 18px;
+      margin-bottom:7px;
+      opacity:0.85;
+      ">太白占卜 · 僅供娛樂參考</div>
+      <div>© 2025 太白占卜</div>
+    `;
+   clonedResult.appendChild(footer);
+  }
 
   }).then(async canvas => {
 
